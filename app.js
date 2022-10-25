@@ -9,17 +9,13 @@ let active_counter = document.getElementById("active_counter");
 let deleteIndex;
 let editItem;
 
-
 form.addEventListener('submit',(e) => {
     e.preventDefault();
     formValidation();
 })
 
-
-
-
 //form validation
-let formValidation = ()=> {
+function formValidation() {
     if(textInput.value ===""){
         console.log("failure");
         alert("please enter value");
@@ -35,7 +31,7 @@ let formValidation = ()=> {
 //collecting datas
 let data = {}
 let dataArray =[]
-
+dataArray = JSON.parse(localStorage.getItem("TodoArray")) || []
 let acceptData = ()=>{
     var data={
         textobj:textInput.value,
@@ -45,15 +41,13 @@ let acceptData = ()=>{
     }
     dataArray.push(data)
     console.log(dataArray)
-    all_counter.innerHTML++
-    active_counter.innerHTML++
-    localStorage.setItem("dataArray",JSON.stringify(dataArray))
+    localStorage.setItem("TodoArray",JSON.stringify(dataArray))
     createTask();
 };
 
 
 //display on screen
-let createTask = ()=>{
+function createTask(){
     let taskone = document.querySelector("#activeTasks")
     taskone.innerHTML = "";
     for(i=0;i<dataArray.length;i++){
@@ -81,12 +75,13 @@ let createTask = ()=>{
         }
     }
     resetForm();
+    counting()
+    
 };
 
-let createTaskCompleted = ()=>{
+function createTaskCompleted(){
     let completedtaskContainer = document.querySelector("#completedtaskContainer")
     completedtaskContainer.innerHTML = "";
-    active_counter.innerHTML--
     for(i=0;i<dataArray.length;i++){
         if(dataArray[i].checkstatus == "completed"){
             completedtaskContainer.innerHTML +=`
@@ -111,6 +106,7 @@ let createTaskCompleted = ()=>{
             `;
         }
     }
+    counting()
     resetForm();
 };
 
@@ -124,9 +120,10 @@ function deleteTask(index){
 function Delete(){
     dataArray.splice(deleteIndex,1)
     console.log(dataArray)
-    all_counter.innerHTML--
     createTask()
     createTaskCompleted()
+    localStorage.setItem("TodoArray",JSON.stringify(dataArray))
+    counting()
 }
 
 
@@ -144,6 +141,7 @@ function Edit(){
     dataArray[editItem].dateobj = document.getElementById("editTheDate").value;
     createTask()
     createTaskCompleted()
+    localStorage.setItem("TodoArray",JSON.stringify(dataArray))
 }
 
 
@@ -171,7 +169,7 @@ function sortByTitle(){
         }
         return 0;
     })
-    
+    localStorage.setItem("TodoArray",JSON.stringify(dataArray))
 };
 
 //sort using date
@@ -185,6 +183,7 @@ function sortByDate(){
         }
         return 0;
     });
+    localStorage.setItem("TodoArray",JSON.stringify(dataArray))
 };
 
 
@@ -198,13 +197,24 @@ function statusChecking(indexofcheck){
         dataArray[indexofcheck].checkstatus = "active"
     }
     createTask()
-    createTaskCompleted()   
+    createTaskCompleted()  
+    counting()
 }
 
 
 //clearing all completed tasks
-function clearCompleted(){
-
+function clearCompletedTask(){
+    for(j=0; j<dataArray.length;j++){
+        if(dataArray[j].checkstatus == "completed"){
+            dataArray.splice(j,1)
+            j--
+        }
+        createTask()
+        createTaskCompleted()  
+        console.log(dataArray)
+    }
+    localStorage.setItem("TodoArray",JSON.stringify(dataArray))
+    console.log("clearCompletedTask")
 }
 
 
@@ -217,9 +227,7 @@ let resetForm = ()=>{
 };
 
 
-
-//display all only
-
+//display active only
 function displyActive(){
     document.querySelector("#completedtaskContainer").style.display="none";
     document.querySelector(".cmTask").style.display="none";
@@ -227,6 +235,7 @@ function displyActive(){
     document.querySelector(".actTask").style.display="block";
 }
 
+//display complete only
 function displayComplete(){
     document.querySelector("#activeTasks").style.display="none";
     document.querySelector(".actTask").style.display="none";
@@ -234,6 +243,7 @@ function displayComplete(){
     document.querySelector(".cmTask").style.display="block";
 }
 
+//display all only
 function displayALL(){
     document.querySelector("#completedtaskContainer").style.display="block";
     document.querySelector(".cmTask").style.display="block";
@@ -241,3 +251,22 @@ function displayALL(){
     document.querySelector(".actTask").style.display="block";
 }
 
+//counters
+function counting() {
+    all_counter.innerHTML = "0"
+    active_counter.innerHTML = "0"
+    completed_counter.innerHTML = "0"
+    for(i=0; i<dataArray.length; i++) {
+        all_counter.innerHTML++;
+        if(dataArray[i].checkstatus == "active") {
+            active_counter.innerHTML++;
+        }
+        if(dataArray[i].checkstatus == "completed") {
+            completed_counter.innerHTML++;
+        }
+    }
+}
+
+counting()
+createTask()
+createTaskCompleted()
