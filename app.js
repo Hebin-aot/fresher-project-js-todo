@@ -8,22 +8,22 @@ let completed_counter = document.getElementById("completed_counter");
 let active_counter = document.getElementById("active_counter");
 let deleteIndex;
 let editItem;
-
+let filteredArray = []
 form.addEventListener('submit',(e) => {
     e.preventDefault();
     formValidation();
 })
 
+
 //form validation
 function formValidation() {
     if(textInput.value ===""){
         console.log("failure");
-        alert("please enter value");
+        alert("please enter Title");
     }
     else{
         console.log("success");
         acceptData();
-
     }
 };
 
@@ -32,7 +32,7 @@ function formValidation() {
 let data = {}
 let dataArray =[]
 dataArray = JSON.parse(localStorage.getItem("TodoArray")) || []
-let acceptData = ()=>{
+function acceptData(){
     var data={
         textobj:textInput.value,
         descriptionobj:textarea.value,
@@ -75,8 +75,7 @@ function createTask(){
         }
     }
     resetForm();
-    counting()
-    
+    counting() 
 };
 
 function createTaskCompleted(){
@@ -109,7 +108,6 @@ function createTaskCompleted(){
     counting()
     resetForm();
 };
-
 
 
 //delete funtion
@@ -220,7 +218,7 @@ function clearCompletedTask(){
 
 
 //reseting Form
-let resetForm = ()=>{
+function resetForm(){
     textInput.value = "";
     textarea.value = "";
     theDate.value = "";
@@ -264,6 +262,83 @@ function counting() {
         if(dataArray[i].checkstatus == "completed") {
             completed_counter.innerHTML++;
         }
+    }
+}
+
+
+
+// for searching
+function searchTask(){
+    let searchInput = document.getElementById("exampleDataList").value;
+    console.log(searchInput)
+ 
+    result = dataArray.filter(function(x,index) {
+    ind = (x.textobj.toLowerCase().includes(searchInput))
+    if(ind){
+        filteredArray.push(index)
+    }
+    })
+ 
+    document.querySelector('#activeTasks').innerHTML = ""
+    document.querySelector('#completedtaskContainer').innerHTML = ""
+    for(i=0;i<filteredArray.length;i++){
+    activeSearch()
+    completedSearch()
+      
+    }
+    filteredArray = []
+ 
+}
+
+//searched active 
+function activeSearch(){ 
+     if(dataArray[filteredArray[i]].checkstatus == "active"){
+        document.querySelector('#activeTasks').innerHTML += `
+            <div class="task-1 d-flex align-items-center p-4 justify-content-between my-4">
+                <div class="checkbox-title d-flex align-items-center gap-3 ">
+                    <input class="checkBox form-check-input rounded-circle " type="checkbox" value="" id=${filteredArray[i]} onclick="statusChecking(this.id)">
+                    <div>
+                        <span class="title-of-task m-0">${dataArray[filteredArray[i]].textobj}  <img src="/images/Ellipse 1.png" alt=""></span><br>
+                        <span class="descrip d-none">${dataArray[filteredArray[i]].descriptionobj}</span>
+                        <span class="date-time m-0 d-flex align-items-center gap-2 pt-2"><img src="/images/Vector (5).png" alt=""> By ${dataArray[filteredArray[i]].dateobj}</span>
+                    </div>
+                </div>
+                <span class="options d-flex gap-4">
+                    <button data-bs-toggle="modal" data-bs-target="#editForm" data-bs-whatever="@mdo" class="delete-bttn" onclick = "editTask(${filteredArray[i]})" style="border:none; ">
+                        <img src="/images/Group 820.png" alt="">
+                    </button>
+                    <button class="delete-bttn" style="border:none;" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick = "deleteTask(${filteredArray[i]})">
+                        <img src="/images/Vector (6).png" alt="">
+                    </button>
+                </span>
+            </div>`
+        }
+}
+ 
+//searched completed
+function completedSearch(){
+    if(dataArray[filteredArray[i]].checkstatus == "completed"){
+        document.querySelector('#completedtaskContainer').innerHTML += `
+
+            <div class="task-1 d-flex align-items-center p-4 justify-content-between my-4">
+                <div class="checkbox-title d-flex align-items-center gap-3 ">
+                    <input class="checkBox form-check-input rounded-circle" type="checkbox" checked id=${filteredArray[i]} onclick="statusChecking(this.id)">
+                    <div>
+                        <span class="title-of-task m-0">${dataArray[filteredArray[i]].textobj}  <img src="/images/Ellipse 1 (1).png" alt=""></span><br>
+                        <span class="descrip d-none">${dataArray[filteredArray[i]].descriptionobj}</span>
+                        <span class="date-time m-0 d-flex align-items-center gap-2 pt-2"><img src="/images/Vector (5).png" alt=""> By ${dataArray[filteredArray[i]].dateobj}</span>
+                    </div>
+                </div>
+                <span class="options d-flex gap-4">
+                    <button data-bs-toggle="modal" data-bs-target="#editForm" data-bs-whatever="@mdo" class="delete-bttn" onclick = "editTask(${filteredArray[i]})" style="border:none; ">
+                        <img src="/images/Group 820.png" alt="">
+                    </button>
+                    <button class="delete-bttn" style="border:none;" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick = "deleteTask(${filteredArray[i]})">
+                        <img src="/images/Vector (6).png" alt="">
+                    </button>
+                </span>
+            </div>
+         `
     }
 }
 
