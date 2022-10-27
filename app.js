@@ -298,7 +298,7 @@ function activeSearch(){
                 <div class="checkbox-title d-flex align-items-center gap-3 ">
                     <input class="checkBox form-check-input rounded-circle " type="checkbox" value="" id=${filteredArray[i]} onclick="statusChecking(this.id)">
                     <div>
-                        <span class="title-of-task m-0">${dataArray[filteredArray[i]].textobj}  <img src="/images/Ellipse 1.png" alt=""></span><br>
+                        <span class="title-of-task m-0">${dataArray[filteredArray[i]].textobj} <img src="/images/Ellipse 1.png" alt=""></span><br>
                         <span class="descrip d-none">${dataArray[filteredArray[i]].descriptionobj}</span>
                         <span class="date-time m-0 d-flex align-items-center gap-2 pt-2"><img src="/images/Vector (5).png" alt=""> By ${dataArray[filteredArray[i]].dateobj}</span>
                     </div>
